@@ -10,6 +10,7 @@ import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import Login from "./components/Login"
 import SignUp from "./components/SignUp";
+import { AlertProvider } from "/workspaces/Photo_Sharing/src/components/Alert/index.jsx";
 
 const App = (props) => {
   return (

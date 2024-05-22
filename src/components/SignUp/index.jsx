@@ -3,31 +3,33 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {useNavigate} from "react-router-dom";
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from "react-router-dom";
+import bcrypt from 'bcryptjs';
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-
     const navigate = useNavigate();
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const [snackbarMessage, setSnackbarMessage] = React.useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState('success'); // 'success' or 'error'
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+        
         const userToList = {
-            firstName: data.get('firstName'),
-            lastName: data.get('lastName'),
+            first_name: data.get('firstName'),
+            last_name: data.get('lastName'),
             occupation: data.get('occupation'),
             location: data.get('location'),
             description: data.get('description'),
@@ -36,30 +38,47 @@ export default function SignUp() {
             username: data.get('username'),
             password: data.get('password'),
         };
-        const response = await fetch('https://49lq8p-8081.csb.app/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify([userToList, userAuth]),
-        });
-        console.log([userToList, userAuth]);
-        if (response.status === 200) {
-            console.log("Sign up sucessful")
-        } else {
-            console.log(response.errored)
+        const salt = bcrypt.genSaltSync(10);
+        const hashPassword = bcrypt.hashSync(userAuth.password, salt);
+        userAuth.password = hashPassword;
+        
+        try {
+            const response = await fetch('https://49lq8p-8081.csb.app/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([userToList, userAuth]),
+            });
+            if (response.status === 200) {
+                setSnackbarMessage('Registration successful! Redirecting to login...');
+                setSnackbarSeverity('success');
+                setOpenSnackbar(true);
+                setTimeout(() => {
+                    navigate('/login');
+                }, 3000); // Chờ 3 giây trước khi chuyển hướng
+            } else {
+                throw new Error('Register failed');
+            }
+        } catch (error) {
+            setSnackbarMessage('Registration failed. Please try again.');
+            setSnackbarSeverity('error');
+            setOpenSnackbar(true);
         }
     }
-
 
     const handleSignIn = () => {
         navigate('/login');
     }
 
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
-                <CssBaseline/>
+                <CssBaseline />
                 <Box
                     sx={{
                         marginTop: 8,
@@ -68,13 +87,13 @@ export default function SignUp() {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-                        <LockOutlinedIcon/>
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign up
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -107,7 +126,7 @@ export default function SignUp() {
                                     id="username"
                                 />
                             </Grid>
-                             <Grid item xs={12}>
+                            <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
@@ -117,7 +136,7 @@ export default function SignUp() {
                                     id="occupation"
                                 />
                             </Grid>
-                             <Grid item xs={12}>
+                            <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
@@ -127,7 +146,7 @@ export default function SignUp() {
                                     id="location"
                                 />
                             </Grid>
-                             <Grid item xs={12}>
+                            <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
@@ -153,7 +172,7 @@ export default function SignUp() {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
+                            sx={{ mt: 3, mb: 2 }}
                         >
                             Sign Up
                         </Button>
@@ -166,6 +185,15 @@ export default function SignUp() {
                         </Grid>
                     </Box>
                 </Box>
+                <Snackbar
+                    open={openSnackbar}
+                    autoHideDuration={3000}
+                    onClose={handleCloseSnackbar}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </Container>
         </ThemeProvider>
     );
