@@ -33,14 +33,12 @@ export default function SignUp() {
             occupation: data.get('occupation'),
             location: data.get('location'),
             description: data.get('description'),
-        };
-        const userAuth = {
             username: data.get('username'),
             password: data.get('password'),
         };
         const salt = bcrypt.genSaltSync(10);
-        const hashPassword = bcrypt.hashSync(userAuth.password, salt);
-        userAuth.password = hashPassword;
+        const hashPassword = bcrypt.hashSync(userToList.password, salt);
+        userToList.password = hashPassword;
         
         try {
             const response = await fetch('https://49lq8p-8081.csb.app/api/user/signup', {
@@ -48,7 +46,7 @@ export default function SignUp() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify([userToList, userAuth]),
+                body: JSON.stringify(userToList),
             });
             if (response.status === 200) {
                 setSnackbarMessage('Registration successful! Redirecting to login...');
@@ -81,7 +79,7 @@ export default function SignUp() {
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: 8,
+                        marginTop: 40,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',

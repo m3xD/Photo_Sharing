@@ -1,9 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {List, Divider, Typography, Grid, Avatar, Card, CardHeader, CardMedia, CardContent} from "@mui/material";
+import {
+    List,
+    Divider,
+    Typography,
+    Grid,
+    Avatar,
+    Card,
+    CardHeader,
+    CardMedia,
+    CardContent,
+    CircularProgress, keyframes
+} from "@mui/material";
 import "./styles.css";
 import models from "../../modelData/models";
 import fetchModel from "../../lib/fetchModelData";
+import Box from "@mui/material/Box";
+import FullScreenLoader from "../Loader";
 
 function UserPhotos() {
     const user = useParams();
@@ -37,12 +50,12 @@ function UserPhotos() {
     }
 
     const styles = {
-    media: {
-        width: 'auto',
-        height: 'auto',
-        objectFit: 'cover'
-    }
-};
+        media: {
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'cover'
+        }
+    };
 
     // If there is user photo, then display user photos
     return selectedPhotos ? (
@@ -97,7 +110,7 @@ function UserPhotos() {
             ))}
         </Grid>
     ) : (
-        <div>Loading User Photos on &quot;userPhotos.jsx&quot;</div>
+        <FullScreenLoader loading={selectedPhotos}/>
     );
 }
 

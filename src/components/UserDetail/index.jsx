@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Grid, Typography} from "@mui/material";
+import {CircularProgress, Grid, keyframes, Typography} from "@mui/material";
 
 import "./styles.css";
 import {Link, useParams} from "react-router-dom";
@@ -7,6 +7,7 @@ import models from "../../modelData/models";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import fetchModel from "../../lib/fetchModelData";
+import FullScreenLoader from "../Loader";
 
 /**
  * Define UserDetail, a React component of Project 4.
@@ -15,13 +16,31 @@ function UserDetail() {
     const {userId} = useParams();
     const [selected, set] = useState(null);
 
+    const fadeIn = keyframes`
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    `;
+
+    const fadeOut = keyframes`
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    `;
+
 
     useEffect(() => {
-       fetchModel("https://49lq8p-8081.csb.app/api/user/find/" + userId).then(
-           (response) => {
-               set(response.data);
-           }
-       )
+        fetchModel("https://49lq8p-8081.csb.app/api/user/find/" + userId).then(
+            (response) => {
+                set(response.data);
+            }
+        )
     }, [userId]);
 
     return (
@@ -59,7 +78,9 @@ function UserDetail() {
                 </Grid>
                 <Grid item xs={4}/>
             </Grid>
-        ) : (<Box sx={{minWidth: 300}}>Loading...</Box>))
+        ) : (
+            <FullScreenLoader loading={selected}/>
+        ));
 
 }
 
