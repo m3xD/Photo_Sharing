@@ -41,7 +41,7 @@ export default function SignUp() {
         userToList.password = hashPassword;
         
         try {
-            const response = await fetch('https://49lq8p-8081.csb.app/api/user/signup', {
+            const response = await fetch('http://localhost:8081/api/user/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

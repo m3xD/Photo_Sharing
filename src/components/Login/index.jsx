@@ -32,17 +32,20 @@ export default function SignIn() {
     const [snackbarSeverity, setSnackbarSeverity] = React.useState('success'); // 'success' or 'error'
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     const [username, setUsername] = React.useState('');
+    const [userID, setUserID] = React.useState('');
 
     const handleSingUp = () => {
         navigate('/signup');
     }
 
     const handleExitWelcome = () => {
+        navigate('/users/' + userID);
         setIsLoggedIn(false);
     }
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
+
     }
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -52,17 +55,22 @@ export default function SignIn() {
             password: data.get('password'),
         });
         const name = data.get('loginName');
-        axios.post('https://49lq8p-8081.csb.app/api/user/login', {
+        axios.post('http://localhost:8081/api/user/login', {
             username: data.get('loginName'),
             password: data.get('password'),
         }).then(function (response) {
             // navigate('...');
             if (response.status === 200) {
+                localStorage.setItem('token', response.data.token);
+                setUserID(response.data.id)
+                localStorage.setItem("username", name);
+                localStorage.setItem("id", response.data.id);
+                setIsLoggedIn(true);
+                console.log(localStorage.getItem('id'));
                 setOpenSnackbar(true);
                 setSnackbarMessage('Login successfully');
                 setSnackbarSeverity('success');
                 setUsername(name);
-                setIsLoggedIn(true);
             } else {
                 setOpenSnackbar(true);
                 setSnackbarMessage('Wrong password or username');

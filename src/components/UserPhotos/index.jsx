@@ -17,6 +17,8 @@ import models from "../../modelData/models";
 import fetchModel from "../../lib/fetchModelData";
 import Box from "@mui/material/Box";
 import FullScreenLoader from "../Loader";
+import axios from "axios";
+import DialogCmt from "../../Comment";
 
 function UserPhotos() {
     const user = useParams();
@@ -25,17 +27,31 @@ function UserPhotos() {
 
     let linkToAuthor; // Link component to Author
 
+    async function fetchData() {
+        const token = localStorage.getItem('token');
+        await axios.get('http://localhost:8081/api/photo/photosOfUser/' + user.userId, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((response) => {
+            setPhoto(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        await axios.get('http://localhost:8081/api/user/find/' + user.userId, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((response) => {
+            setUser(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
     useEffect(() => {
-        fetchModel("https://49lq8p-8081.csb.app/api/photo/photosOfUser/" + user.userId).then(
-            (response) => {
-                setPhoto(response.data);
-            }
-        )
-        fetchModel("https://49lq8p-8081.csb.app/api/user/find/" + user.userId).then(
-            (response) => {
-                setUser(response.data);
-            }
-        )
+        fetchData();
     }, [user.userId]);
 
 
@@ -56,11 +72,10 @@ function UserPhotos() {
             objectFit: 'cover'
         }
     };
-
-    // If there is user photo, then display user photos
+    console.log(selectedPhotos);
     return selectedPhotos ? (
         <Grid justifyContent="center" container spacing={3}>
-            {selectedPhotos.map((photo) => (
+            {selectedPhotos.map((photo, index) => (
                 <Grid item xs={6} key={photo._id}>
                     <Card variant="outlined">
                         <CardHeader
@@ -82,7 +97,6 @@ function UserPhotos() {
                                     <Divider/>
                                 </Typography>
                             )}
-                            {/* Only when photo has comments, then display related comments */}
                             {photo.comments &&
                                 photo.comments.map((c) => (
                                     <List key={c._id}>
@@ -103,6 +117,7 @@ function UserPhotos() {
                                         </Typography>
                                     </List>
                                 ))}
+                            <DialogCmt photo_id={selectedPhotos[index]._id}></DialogCmt>
                         </CardContent>
 
                     </Card>

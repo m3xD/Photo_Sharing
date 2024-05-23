@@ -8,41 +8,42 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
+import axios from "axios";
 
-export default function TopBar() {
-  const navigate = useNavigate();
-  const [selected, set] = useState();
-  const handleLoginClick = () => {
-    navigate('/login');
-  }
+export default function TopBar( {isLoggedIn} ) {
+    const navigate = useNavigate();
+    const name = localStorage.getItem('username')
+    const handleLogoutClick = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userID')
+        console.log(localStorage.getItem('userID'));
+         navigate('/login');
+    }
 
-  useEffect(() => {
-
-  }, []);
-
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Photo Sharing
-          </Typography>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Hello
-          </Typography>
-          <Button color="inherit" onClick = {handleLoginClick}>Login</Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
+    return (
+        <Box sx={{flexGrow: 1}}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{mr: 2}}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                        Photo Sharing
+                    </Typography>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                        {name === null ? 'Hello, guest' : 'Hello, ' + name}
+                    </Typography>
+                    {isLoggedIn ? <Button color="inherit" onClick={handleLogoutClick}>Logout</Button> : null}
+                </Toolbar>
+            </AppBar>
+        </Box>
+    );
 }
 

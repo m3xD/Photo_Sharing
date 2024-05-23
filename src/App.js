@@ -1,33 +1,65 @@
 import './App.css';
-
-import React from "react";
-import {Grid, Typography, Paper} from "@mui/material";
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Grid, Paper} from "@mui/material";
+import {BrowserRouter as Router, Route, Routes, Navigate, redirect, useLocation} from "react-router-dom";
 
 import TopBar from "./components/TopBar";
 import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
-import Login from "./components/Login"
+import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import Home from './components/Home'
+import PrivateRoute from "./components/PrivateRoute";
 
-const App = (props) => {
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+const App = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (token) {
+            setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }, [token]);
+
+
     return (
         <Router>
             <div>
-
-                {isLoggedIn ? (
-                    <Home isLoggedIn={isLoggedIn}/>
-                ) : (<Routes>
-                    <Route path="*" element={<Navigate to="/login"/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/signup" element={<SignUp/>}/>
-                </Routes>)}
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TopBar isLoggedIn={isLoggedIn}/>
+                    </Grid>
+                    <div className="main-topbar-buffer"/>
+                    <Grid item sm={3}>
+                        <Paper className="main-grid-item">
+                            {isLoggedIn ?  <UserList/> : ""}
+                        </Paper>
+                    </Grid>
+                    <Grid item sm={9}>
+                        <Paper className="main-grid-item">
+                            <Routes>
+                                <Route element={<PrivateRoute/>}>
+                                    <Route
+                                        path="/users/:userId"
+                                        element={<UserDetail/>}
+                                    />
+                                    <Route
+                                        path="/photos/:userId"
+                                        element={<UserPhotos/>}
+                                    />
+                                    <Route path="/users" element={<UserList/>}/>
+                                </Route>
+                                <Route path="/login" element={<Login/>}/>
+                                <Route path="/signup" element={<SignUp/>}/>
+                            </Routes>
+                        </Paper>
+                    </Grid>
+                </Grid>
             </div>
         </Router>
     );
-}
+};
 
 export default App;

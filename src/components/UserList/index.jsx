@@ -7,19 +7,29 @@ import {Person} from "@mui/icons-material";
 import models from "../../modelData/models";
 import {useEffect, useState} from "react";
 import fetchModel from "../../lib/fetchModelData";
+import axios from "axios";
 
 
 function UserList() {
 
     const [selected, set] = useState([]);
 
+
     useEffect(() => {
-        fetchModel("https://49lq8p-8081.csb.app/api/user/list").then(
-            (response) => {
+        async function fetchData() {
+            const token = localStorage.getItem('token');
+            await axios.get('http://localhost:8081/api/user/list', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then((response) => {
                 set(response.data);
-                console.log(selected);
-            }
-        )
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+
+        fetchData();
     }, []);
 
     return (

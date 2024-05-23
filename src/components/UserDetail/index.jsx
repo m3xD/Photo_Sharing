@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import fetchModel from "../../lib/fetchModelData";
 import FullScreenLoader from "../Loader";
+import axios from "axios";
 
 /**
  * Define UserDetail, a React component of Project 4.
@@ -36,11 +37,19 @@ function UserDetail() {
 
 
     useEffect(() => {
-        fetchModel("https://49lq8p-8081.csb.app/api/user/find/" + userId).then(
-            (response) => {
+        async function fetchData() {
+            const token = localStorage.getItem('token');
+            await axios.get('http://localhost:8081/api/user/find/' + userId, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then((response) => {
                 set(response.data);
-            }
-        )
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+        fetchData();
     }, [userId]);
 
     return (
