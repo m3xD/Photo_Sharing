@@ -21,6 +21,10 @@ export default function TopBar( {isLoggedIn} ) {
          navigate('/login');
     }
 
+    const handleUploadClick = () => {
+        navigate('/upload');
+    }
+
     return (
         <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
@@ -40,6 +44,7 @@ export default function TopBar( {isLoggedIn} ) {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         {name === null ? 'Hello, guest' : 'Hello, ' + name}
                     </Typography>
+                    {isLoggedIn ? <Button color="inherit" onClick={handleUploadClick}>Upload Photo</Button> : null}
                     {isLoggedIn ? <Button color="inherit" onClick={handleLogoutClick}>Logout</Button> : null}
                 </Toolbar>
             </AppBar>
