@@ -18,7 +18,7 @@ import fetchModel from "../../lib/fetchModelData";
 import Box from "@mui/material/Box";
 import FullScreenLoader from "../Loader";
 import axios from "axios";
-import DialogCmt from "../../Comment";
+import DialogCmt from "../Comment";
 
 function UserPhotos() {
     const user = useParams();
@@ -54,6 +54,10 @@ function UserPhotos() {
         fetchData();
     }, [user.userId]);
 
+    const handleCommentSumbit = () => {
+        fetchData();
+    }
+
 
     if (selectedUser) {
         linkToAuthor = (
@@ -72,7 +76,6 @@ function UserPhotos() {
             objectFit: 'cover'
         }
     };
-    console.log(selectedPhotos);
     return selectedPhotos ? (
         <Grid justifyContent="center" container spacing={3}>
             {selectedPhotos.map((photo, index) => (
@@ -117,7 +120,7 @@ function UserPhotos() {
                                         </Typography>
                                     </List>
                                 ))}
-                            <DialogCmt photo_id={selectedPhotos[index]._id}></DialogCmt>
+                            <DialogCmt photo_id={selectedPhotos[index]._id} onCommentSubmit = {handleCommentSumbit}></DialogCmt>
                         </CardContent>
 
                     </Card>

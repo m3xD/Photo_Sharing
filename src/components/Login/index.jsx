@@ -66,7 +66,6 @@ export default function SignIn() {
                 localStorage.setItem("username", name);
                 localStorage.setItem("id", response.data.id);
                 setIsLoggedIn(true);
-                console.log(localStorage.getItem('id'));
                 setOpenSnackbar(true);
                 setSnackbarMessage('Login successfully');
                 setSnackbarSeverity('success');
@@ -92,7 +91,7 @@ export default function SignIn() {
                 <CssBaseline/>
                 <Box
                     sx={{
-                        marginTop: 50,
+                        marginTop: 10,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',

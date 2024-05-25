@@ -1,11 +1,13 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Dialog, DialogContent, DialogContentText, TextField, DialogActions, Chip} from "@mui/material";
 import axios from "axios";
 import './style.css'
+import {useNavigate} from "react-router-dom";
 
 export default function DialogCmt(props) {
     const [open, setOpen] = useState(false);
     const [comment, setComment] = useState("");
+    const [isSummited, setIsSummited] = useState(false);
 
     const handleClickOpen = () => setOpen(true);
     const handleClickClose = () => setOpen(false);
@@ -23,8 +25,14 @@ export default function DialogCmt(props) {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
-        }).then().catch(err => console.log(err));
+        }).then((response) => {
+            props.onCommentSubmit();
+            console.log(response);
+        }).catch(err => {
+            console.log(err)
+        });
     };
+
 
     // Rendering components
     return (

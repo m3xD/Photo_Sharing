@@ -36,6 +36,7 @@ export default function SignUp() {
             username: data.get('username'),
             password: data.get('password'),
         };
+
         const salt = bcrypt.genSaltSync(10);
         const hashPassword = bcrypt.hashSync(userToList.password, salt);
         userToList.password = hashPassword;
@@ -79,7 +80,7 @@ export default function SignUp() {
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: 40,
+                        marginTop: 10,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
