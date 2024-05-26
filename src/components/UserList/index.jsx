@@ -8,27 +8,30 @@ import models from "../../modelData/models";
 import {useEffect, useState} from "react";
 import fetchModel from "../../lib/fetchModelData";
 import axios from "axios";
+import Login from '../Login/index'
+import LoginUser from "../Login/index";
+import UserDetailWrapper from "../Wrapper";
 
 
 function UserList() {
 
     const [selected, set] = useState([]);
 
+    async function fetchData() {
+        const token = localStorage.getItem('token');
+        await axios.get('http://localhost:8081/api/user/list', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((response) => {
+            set(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
 
     useEffect(() => {
-        async function fetchData() {
-            const token = localStorage.getItem('token');
-            await axios.get('http://localhost:8081/api/user/list', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then((response) => {
-                set(response.data);
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
-
         fetchData();
     }, []);
 
@@ -53,7 +56,6 @@ function UserList() {
                     </ListItem>))
                 }
             </List>
-
             <Typography variant="body1"></Typography>
         </div>
     );

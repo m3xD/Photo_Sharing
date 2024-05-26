@@ -15,14 +15,16 @@ import UploadPhoto from "./components/Upload";
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const token = localStorage.getItem('token');
-
+    const [isReload, setIsReload] = useState(false);
     useEffect(() => {
         if (token) {
             setIsLoggedIn(true);
         } else {
             setIsLoggedIn(false);
         }
+        console.log(localStorage.getItem('token'));
     }, [token]);
+
 
     return (
         <Router>

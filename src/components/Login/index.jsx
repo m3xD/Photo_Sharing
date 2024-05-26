@@ -25,7 +25,7 @@ import FullScreenWelcome from "../Loader/welcomescreen";
 const defaultTheme = createTheme();
 
 
-export default function SignIn() {
+export default function LoginUser(props) {
     const navigate = useNavigate();
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
@@ -33,6 +33,7 @@ export default function SignIn() {
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     const [username, setUsername] = React.useState('');
     const [userID, setUserID] = React.useState('');
+    const [formData, setFormData] = useState({'loginname': '', 'password': ''});
 
     const handleSingUp = () => {
         navigate('/signup');
@@ -40,24 +41,24 @@ export default function SignIn() {
 
     const handleExitWelcome = () => {
         navigate('/users/' + userID);
+        window.location.reload();
         setIsLoggedIn(false);
     }
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
+    }
 
+    const handleOnChange = (event) => {
+        const {name, value} = event.target;
+        setFormData({...formData, [name]: value});
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            loginName: data.get('loginName'),
-            password: data.get('password'),
-        });
-        const name = data.get('loginName');
+        const name = formData.loginname;
         axios.post('http://localhost:8081/api/user/login', {
-            username: data.get('loginName'),
-            password: data.get('password'),
+            username: formData.loginname,
+            password: formData.password,
         }).then(function (response) {
             // navigate('...');
             if (response.status === 200) {
@@ -70,15 +71,12 @@ export default function SignIn() {
                 setSnackbarMessage('Login successfully');
                 setSnackbarSeverity('success');
                 setUsername(name);
-            } else {
-                setOpenSnackbar(true);
-                setSnackbarMessage('Wrong password or username');
-                setSnackbarSeverity('error');
+
             }
         }).catch(function (error) {
             setOpenSnackbar(true);
-            setSnackbarMessage('Failed to login');
-            console.log(error);
+            setSnackbarMessage('Failed to login. ' + error.response.data);
+            console.log(error.response);
             setSnackbarSeverity('error');
         });
     };
@@ -109,8 +107,11 @@ export default function SignIn() {
                             required
                             fullWidth
                             id="loginName"
-                            label="User Name"
-                            name="loginName"
+                            label="User name"
+                            name="loginname"
+                            type="text"
+                            value={formData.username}
+                            onChange={handleOnChange}
                             autoFocus
                         />
                         <TextField
@@ -122,6 +123,8 @@ export default function SignIn() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={formData.password}
+                            onChange={handleOnChange}
                         />
                         <Button
                             type="submit"

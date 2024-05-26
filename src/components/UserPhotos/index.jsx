@@ -26,6 +26,13 @@ function UserPhotos() {
     const [selectedUser, setUser] = useState();
 
     let linkToAuthor; // Link component to Author
+    const style = {
+        media: {
+            width: '100%',
+            height: 'auto',
+            objectFit: 'cover'
+        }
+    };
 
     async function fetchData() {
         const token = localStorage.getItem('token');
@@ -54,7 +61,7 @@ function UserPhotos() {
         fetchData();
     }, [user.userId]);
 
-    const handleCommentSumbit = () => {
+    const handleCommentSubmit = () => {
         fetchData();
     }
 
@@ -69,13 +76,6 @@ function UserPhotos() {
         linkToAuthor = <p>Loading...</p>;
     }
 
-    const styles = {
-        media: {
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'cover'
-        }
-    };
     return selectedPhotos ? (
         <Grid justifyContent="center" container spacing={3}>
             {selectedPhotos.map((photo, index) => (
@@ -90,7 +90,7 @@ function UserPhotos() {
                             component="img"
                             image={require(`../../images/${photo.file_name}`)}
                             alt="Picture of Author"
-                            style={styles.media}
+                            style={style.media}
                         />
 
                         <CardContent>
@@ -120,7 +120,7 @@ function UserPhotos() {
                                         </Typography>
                                     </List>
                                 ))}
-                            <DialogCmt photo_id={selectedPhotos[index]._id} onCommentSubmit = {handleCommentSumbit}></DialogCmt>
+                            <DialogCmt photo_id={selectedPhotos[index]._id} onCommentSubmit = {handleCommentSubmit}></DialogCmt>
                         </CardContent>
 
                     </Card>

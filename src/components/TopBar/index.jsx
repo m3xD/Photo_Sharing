@@ -18,7 +18,8 @@ export default function TopBar( {isLoggedIn} ) {
         localStorage.removeItem('username');
         localStorage.removeItem('userID')
         console.log(localStorage.getItem('userID'));
-         navigate('/login');
+        navigate('/login');
+        window.location.reload();
     }
 
     const handleUploadClick = () => {
